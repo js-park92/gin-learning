@@ -6,6 +6,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 
+	"gin-learning/internal/dto"
 	"gin-learning/internal/service"
 )
 
@@ -23,7 +24,7 @@ func (h *UserHandler) List(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
-	c.JSON(http.StatusOK, users)
+	c.JSON(http.StatusOK, dto.ToUserResponseList(users))
 }
 
 func (h *UserHandler) Get(c *gin.Context) {
@@ -37,24 +38,21 @@ func (h *UserHandler) Get(c *gin.Context) {
 		c.JSON(http.StatusNotFound, gin.H{"error": "user not found"})
 		return
 	}
-	c.JSON(http.StatusOK, user)
+	c.JSON(http.StatusOK, dto.ToUserResponse(user))
 }
 
 func (h *UserHandler) Create(c *gin.Context) {
-	var body struct {
-		Name  string `json:"name"  binding:"required"`
-		Email string `json:"email" binding:"required,email"`
-	}
-	if err := c.ShouldBindJSON(&body); err != nil {
+	var req dto.CreateUserRequest
+	if err := c.ShouldBindJSON(&req); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	user, err := h.svc.Create(body.Name, body.Email)
+	user, err := h.svc.Create(req.Name, req.Email)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
-	c.JSON(http.StatusCreated, user)
+	c.JSON(http.StatusCreated, dto.ToUserResponse(user))
 }
 
 func (h *UserHandler) Update(c *gin.Context) {
@@ -63,20 +61,17 @@ func (h *UserHandler) Update(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid id"})
 		return
 	}
-	var body struct {
-		Name  string `json:"name"  binding:"required"`
-		Email string `json:"email" binding:"required,email"`
-	}
-	if err := c.ShouldBindJSON(&body); err != nil {
+	var req dto.UpdateUserRequest
+	if err := c.ShouldBindJSON(&req); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	user, err := h.svc.Update(id, body.Name, body.Email)
+	user, err := h.svc.Update(id, req.Name, req.Email)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
-	c.JSON(http.StatusOK, user)
+	c.JSON(http.StatusOK, dto.ToUserResponse(user))
 }
 
 func (h *UserHandler) Delete(c *gin.Context) {
