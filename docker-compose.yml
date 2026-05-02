@@ -35,6 +35,8 @@ services:
       POSTGRES_USER: ${DB_USER:-gin_user}
       POSTGRES_PASSWORD: ${DB_PASSWORD:-gin_password}
       POSTGRES_DB: ${DB_NAME:-gin_learning}
+    ports:
+      - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
