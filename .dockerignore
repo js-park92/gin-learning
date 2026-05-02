@@ -1,0 +1,6 @@
+.env
+*.md
+.git
+.gitignore
+.golangci.yml
+bin/
