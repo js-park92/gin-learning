@@ -1,6 +1,8 @@
 .env
-*.md
+.env.*
 .git
 .gitignore
 .golangci.yml
 bin/
+README.md
+CLAUDE.md
